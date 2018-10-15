@@ -1,1 +1,2 @@
 # 3X
+Minecraft is all about building fantastic things and exploring randomly generated landscapes. But what do you need in order to build roads, pipelines, bridges, and buildings? Resources. 3X is all about harvesting resources at an ever increasing rate. Get more gravel to build more roads to get more gravel to build more roads. Explore and locate rich deposits of minerals. Exploit discovered resources and Expand your infrastructure to collect resources on a scale that you’ve never seen before. Welcome to the industrial revolution minecraft style. 
