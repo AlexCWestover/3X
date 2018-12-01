@@ -1,0 +1,16 @@
+[
+{
+  "modid": "threexm",
+  "name": "3X",
+  "description": "Explore, Expand, Exploit",
+  "version": "1.0",
+  "mcversion": "1.12.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Brutal"],
+  "credits": "Me, Myself, Myself and I, just Me, Myself, and I, I.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

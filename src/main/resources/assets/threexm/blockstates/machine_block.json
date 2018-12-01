@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "threexm:machine_block" }
+    }
+}
