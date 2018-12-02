@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -25,6 +25,7 @@ public class MachineBlock extends BlockBase implements ITickable{
 	private int currentIndex = -1;
 	private ArrayList<BlockPos> blocksToDestroy = null;
 	private World worldIn = null;
+	private BlockPos location = null;
 	  
 	public MachineBlock(String name, Material material) {
 		super(name, material);
@@ -34,7 +35,7 @@ public class MachineBlock extends BlockBase implements ITickable{
 	
 	@Override
 	public boolean onBlockActivated(World worldIn,BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		for(int i = 0; i<100; ++i) {
+		for(int i = 0; i<10; ++i) {
 			process();
 		}
 		return true;
@@ -43,12 +44,14 @@ public class MachineBlock extends BlockBase implements ITickable{
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		
+		setLocation(pos);
 		int depth = 16;
 		BlockPos center = calculateCenter(pos,placer,depth);
 		setBlocksToDestroy(returnBlocksToDestroy(worldIn, center,depth));
 		setWorld(worldIn);
 		setIndex(0);
 		setActivated();
+		
 		
 		
 		
@@ -111,8 +114,16 @@ public class MachineBlock extends BlockBase implements ITickable{
 	}
 	
 	private void destroyNext() {
-		this.worldIn.destroyBlock(this.blocksToDestroy.get(currentIndex), false);
+
+		IBlockState ibs = this.worldIn.getBlockState(this.blocksToDestroy.get(currentIndex));
+		Block block = ibs.getBlock();
+		this.worldIn.playEvent(2001, this.blocksToDestroy.get(currentIndex), Block.getStateId(ibs));
+		block.dropBlockAsItem(worldIn, this.location, ibs, 0);
+		this.worldIn.setBlockToAir(this.blocksToDestroy.get(currentIndex));
+		//this.worldIn.setBlockState(this.blocksToDestroy.get(currentIndex), Blocks.AIR.getDefaultState(),3);
+		//this.worldIn.destroyBlock(this.blocksToDestroy.get(currentIndex), true);
 		nextIndex();
+
 	}
 	
 	private boolean hasNext() {
@@ -124,6 +135,10 @@ public class MachineBlock extends BlockBase implements ITickable{
 	
 	private void nextIndex() {
 		++currentIndex;
+	}
+	
+	private void setLocation(BlockPos pos) {
+		this.location = pos;
 	}
 	
 	private BlockPos calculateCenter(BlockPos pos,EntityLivingBase placer, int radius) {
@@ -145,4 +160,6 @@ public class MachineBlock extends BlockBase implements ITickable{
 			return pos;
 		}
 	}
+	
+	
 }
