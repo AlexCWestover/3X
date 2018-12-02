@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,7 +21,6 @@ import net.minecraft.world.World;
 public class MachineBlock extends BlockBase implements ITickable{
 	
 	
-	//private BlockPos center = null;
 	private boolean activated = false;
 	private int currentIndex = -1;
 	private ArrayList<BlockPos> blocksToDestroy = null;
@@ -41,10 +42,16 @@ public class MachineBlock extends BlockBase implements ITickable{
 	
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		setBlocksToDestroy(returnBlocksToDestroy(worldIn, pos));
+		
+		int depth = 16;
+		BlockPos center = calculateCenter(pos,placer,depth);
+		setBlocksToDestroy(returnBlocksToDestroy(worldIn, center,depth));
 		setWorld(worldIn);
 		setIndex(0);
 		setActivated();
+		
+		
+		
 		System.out.println("Machine_Block PLACED");
 	}
 	
@@ -53,9 +60,8 @@ public class MachineBlock extends BlockBase implements ITickable{
 		// This isn't working as expected
 	}
 	
-	private ArrayList<BlockPos> returnBlocksToDestroy(World worldIn, BlockPos pos) {
+	private ArrayList<BlockPos> returnBlocksToDestroy(World worldIn, BlockPos pos, int depth) {
 		ArrayList<BlockPos> blocksToDestroy = new ArrayList<BlockPos>();
-		int depth = 16;
 		int radius = depth;
 		for(int current = 1; current <= depth; ++current, --radius) {
 			for(int x = (-1)*radius; x <= radius; ++x) {
@@ -118,5 +124,25 @@ public class MachineBlock extends BlockBase implements ITickable{
 	
 	private void nextIndex() {
 		++currentIndex;
+	}
+	
+	private BlockPos calculateCenter(BlockPos pos,EntityLivingBase placer, int radius) {
+		// North is Negative Z
+		// East is Positive X
+		// South is Positive Z
+		// West is Negative X
+		EnumFacing x = placer.getHorizontalFacing();
+		switch(x) {
+		case NORTH:
+			return pos.add(0, 0, (-1) * radius - 1);
+		case EAST:
+			return pos.add(radius + 1, 0, 0);
+		case SOUTH:
+			return pos.add(0, 0, radius + 1);
+		case WEST:
+			return pos.add((-1) * radius - 1, 0, 0);
+		default:
+			return pos;
+		}
 	}
 }
