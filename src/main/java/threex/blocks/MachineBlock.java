@@ -60,7 +60,11 @@ public class MachineBlock extends BlockBase implements ITickable{
 		for(int current = 1; current <= depth; ++current, --radius) {
 			for(int x = (-1)*radius; x <= radius; ++x) {
 				for(int z =(-1)*radius; z <= radius; ++z) {
-					blocksToDestroy.add(pos.add(x, (-1)*current, z));
+					if(!worldIn.isAirBlock(pos.add(x, (-1)*current, z)) &&
+							!worldIn.getBlockState(pos.add(x, (-1)*current, z)).getBlock().getClass().toString().equals("class net.minecraft.block.BlockEmptyDrops")) {
+						blocksToDestroy.add(pos.add(x, (-1)*current, z));
+					}
+					
 				}
 			}
 		}
