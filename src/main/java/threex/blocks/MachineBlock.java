@@ -5,44 +5,49 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class MachineBlock extends BlockBase implements ITickable{
+public class MachineBlock extends BlockBase{
 	
+	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 	
-	private boolean activated = false;
-	private int currentIndex = -1;
-	private ArrayList<BlockPos> blocksToDestroy = null;
-	private World worldIn = null;
-	private BlockPos location = null;
+	//private boolean activated = false;
+	//private int currentIndex = -1;
+	//private ArrayList<BlockPos> blocksToDestroy = null;
+	//private World worldIn = null;
+	//private BlockPos location = null;
+	//private EnumFacing facing = null;
 	  
 	public MachineBlock(String name, Material material) {
 		super(name, material);
 		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-		
 	}
 	
 	@Override
 	public boolean onBlockActivated(World worldIn,BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		for(int i = 0; i<10; ++i) {
-			process();
-		}
+		System.out.println("Stop hitting me.");
 		return true;
     }
 	
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+		// Attempting to pass Facing enum to entitiy. 
+		// worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing()),2);
+		
+		/* Moved Calculations to Tile Entity
 		
 		setLocation(pos);
 		int depth = 16;
@@ -52,17 +57,38 @@ public class MachineBlock extends BlockBase implements ITickable{
 		setIndex(0);
 		setActivated();
 		
-		
-		
+		*/
 		
 		System.out.println("Machine_Block PLACED");
 	}
 	
 	@Override
+	public boolean hasTileEntity(IBlockState state) {
+		return true;
+	}
+	
+	/*
+	@Override
 	public void update() {
 		// This isn't working as expected
 	}
+	*/
 	
+	@Override
+	public TileEntity createTileEntity(World world, IBlockState state) {
+		return new MachineTE();
+	}
+	
+	/*
+	@Override
+	public int tickRate(World worldIn) {
+		return 10;
+	}
+	
+	*/
+	
+	/*
+
 	private ArrayList<BlockPos> returnBlocksToDestroy(World worldIn, BlockPos pos, int depth) {
 		ArrayList<BlockPos> blocksToDestroy = new ArrayList<BlockPos>();
 		int radius = depth;
@@ -80,7 +106,9 @@ public class MachineBlock extends BlockBase implements ITickable{
 		return blocksToDestroy;	
 	}
 	
-	private void process() {
+	
+	
+	public void process() {
 		if(this.activated && this.currentIndex != -1) {
 			if(hasNext()) {
 				destroyNext();
@@ -119,9 +147,9 @@ public class MachineBlock extends BlockBase implements ITickable{
 		Block block = ibs.getBlock();
 		this.worldIn.playEvent(2001, this.blocksToDestroy.get(currentIndex), Block.getStateId(ibs));
 		block.dropBlockAsItem(worldIn, this.location, ibs, 0);
-		this.worldIn.setBlockToAir(this.blocksToDestroy.get(currentIndex));
-		//this.worldIn.setBlockState(this.blocksToDestroy.get(currentIndex), Blocks.AIR.getDefaultState(),3);
-		//this.worldIn.destroyBlock(this.blocksToDestroy.get(currentIndex), true);
+		//this.worldIn.setBlockToAir(this.blocksToDestroy.get(currentIndex));
+		this.worldIn.setBlockState(this.blocksToDestroy.get(currentIndex), Blocks.AIR.getDefaultState(),3);
+		//this.worldIn.destroyBlock(this.blocksToDestroy.get(currentIndex), false);
 		nextIndex();
 
 	}
@@ -161,5 +189,8 @@ public class MachineBlock extends BlockBase implements ITickable{
 		}
 	}
 	
-	
+	public EnumFacing getFacing() {
+		return this.facing;
+	}
+	*/
 }
